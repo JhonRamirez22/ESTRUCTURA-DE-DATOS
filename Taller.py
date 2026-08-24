@@ -15,7 +15,7 @@ second_row_col = list2[1][1]
 print("2b - Element at row 2, column 2 of the 2D list:", second_row_col)
 
 
-list.insert(2, "Estructura de datos")
+list.insert(3, "Estructura de datos")
 print("\n3a - 1D list after inserting 'Estructura de datos' at position 3:")
 print("    ", list)
 
