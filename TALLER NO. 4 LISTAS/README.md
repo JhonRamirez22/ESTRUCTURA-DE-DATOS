@@ -144,3 +144,6 @@ El diagrama tiene una **bifurcación (fork)** después de "Recoger pedido" y una
 <!-- TODO: Agregar persistencia de estado con localStorage para múltiples sesiones -->
 <!-- TODO: Soporte para múltiples pedidos concurrentes -->
 <!-- TODO: Animaciones de transición entre pasos -->
+
+
+## Link de URL: https://listas-rho-five.vercel.app/
