@@ -175,18 +175,25 @@ describe('Stack', () => {
       const undoStack = createStack<string>(5);
       const redoStack = createStack<string>();
       
-      // Usuario escribe
+      // Usuario escribe: cada push guarda el estado del documento
       undoStack.push('estado inicial');
       undoStack.push('después de escribir A');
       undoStack.push('después de escribir B');
       
-      // Usuario hace undo
-      let current = 'después de escribir B';
-      redoStack.push(current);
-      current = undoStack.pop()!;
+      // Usuario hace undo: pop de undo → obtener estado anterior
+      let current = undoStack.pop()!;
+      redoStack.push(current); // guardamos en redo para poder rehacer
       
-      assert.equal(current, 'después de escribir A');
+      // Después de undo, volvemos al estado 'después de escribir A'
+      assert.equal(current, 'después de escribir B');
+      assert.equal(undoStack.peek(), 'después de escribir A');
       assert.equal(redoStack.size(), 1);
+      
+      // Usuario hace otro undo
+      current = undoStack.pop()!;
+      redoStack.push(current);
+      assert.equal(current, 'después de escribir A');
+      assert.equal(undoStack.peek(), 'estado inicial');
       
       // Usuario escribe algo nuevo → redo se vacía
       redoStack.clear();
@@ -195,7 +202,7 @@ describe('Stack', () => {
       undoStack.push(current);
       
       assert.equal(redoStack.isEmpty(), true);
-      assert.equal(undoStack.size(), 4);
+      assert.equal(undoStack.size(), 3);
     });
   });
 });

@@ -19,50 +19,40 @@ export interface Stack<T> {
 
 export function createStack<T>(maxSize: number = Infinity): Stack<T> {
   const items: T[] = [];
-  let topIndex = -1;
 
   return {
     push(item: T): void {
-      topIndex++;
-      
       // Si superamos el límite, descartar el elemento más antiguo (índice 0)
-      if (topIndex === maxSize) {
+      if (items.length === maxSize) {
         items.shift(); // O(n) pero solo ocurre una vez cada maxSize pushes
-        topIndex = 0;  // Reiniciar: el nuevo elemento va al inicio
       }
-      
-      items[topIndex] = item;
+      items.push(item);
     },
 
     pop(): T | undefined {
-      if (topIndex < 0) return undefined;
-      
-      const item = items[topIndex];
-      topIndex--;
-      return item;
+      return items.pop();
     },
 
     peek(): T | undefined {
-      if (topIndex < 0) return undefined;
-      return items[topIndex];
+      if (items.length === 0) return undefined;
+      return items[items.length - 1];
     },
 
     isEmpty(): boolean {
-      return topIndex < 0;
+      return items.length === 0;
     },
 
     size(): number {
-      return topIndex + 1;
+      return items.length;
     },
 
     clear(): void {
       items.length = 0;
-      topIndex = -1;
     },
 
     toArray(): T[] {
-      // Retornar de abajo hacia arriba (orden cronológico)
-      return items.slice(0, topIndex + 1);
+      // Retornar copia en orden cronológico (de abajo hacia arriba)
+      return [...items];
     }
   };
 }

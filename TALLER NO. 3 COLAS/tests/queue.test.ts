@@ -122,7 +122,7 @@ describe('Queue', () => {
       queue.enqueue('job-2');
       queue.enqueue('job-3');
       
-      // Simular reintento: job-2 falló, se reinserta al frente
+      // Simular reintento: job-1 se procesó, job-2 falló y se reinserta al frente
       queue.dequeue(); // job-1 se procesó exitosamente
       queue.enqueueFront('job-2-reintento');
       
@@ -240,16 +240,18 @@ describe('Queue', () => {
       job2.attempts++;
       queue.enqueueFront(job2);
       
-      // El orden ahora es: job-2 (reintento), job-2, job-3
-      // (job-2 original sigue en la cola, solo se reintentó al frente)
+      // El orden ahora es: job-2 (reintento), job-3
       const jobs = queue.toArray();
       assert.equal(jobs[0].id, 'job-2');
       assert.equal(jobs[0].attempts, 1);
-      assert.equal(jobs[1].id, 'job-2');
-      assert.equal(jobs[2].id, 'job-3');
+      assert.equal(jobs[1].id, 'job-3');
       
-      // Cola llena: no se puede agregar más
-      assert.equal(queue.enqueue({ id: 'job-4', attempts: 0 }), false);
+      // Cola tiene 2 de 3 espacios, aún se puede agregar
+      assert.equal(queue.enqueue({ id: 'job-4', attempts: 0 }), true);
+      
+      // Ahora la cola está llena
+      assert.equal(queue.isFull(), true);
+      assert.equal(queue.enqueue({ id: 'job-5', attempts: 0 }), false);
     });
 
     it('colapsar jobs del mismo origen (optimización)', () => {
