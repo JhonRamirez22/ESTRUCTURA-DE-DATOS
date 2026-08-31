@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - heading "Order System" [level=1] [ref=e6]
+    - paragraph [ref=e7]: Process Diagram — Linked Lists
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - button "Advance step" [ref=e10] [cursor=pointer]
+      - button "Restart" [ref=e13] [cursor=pointer]
+      - generic [ref=e17]: "Status: Ready: Request order (Customer)"
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - generic [ref=e20]: Customer
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e23]:
+              - generic [ref=e24]: Request order
+              - generic [ref=e25]: The customer places an order with the waiter
+            - button "Edit Request order" [ref=e26] [cursor=pointer]
+          - generic [ref=e30]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: Request bill
+              - generic [ref=e33]: The customer requests the bill
+            - button "Edit Request bill" [ref=e34] [cursor=pointer]
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - generic [ref=e40]: Pay order
+              - generic [ref=e41]: The customer pays and the process ends
+            - button "Edit Pay order" [ref=e42] [cursor=pointer]
+      - generic [ref=e46]:
+        - generic [ref=e47]: Waiter
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]: Pick up order
+              - generic [ref=e52]: The waiter takes the order from the customer
+            - button "Edit Pick up order" [ref=e53] [cursor=pointer]
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - generic [ref=e59]: Serve order
+              - generic [ref=e60]: The waiter serves the order to the customer (requires kitchen ready)
+            - button "Edit Serve order" [ref=e61] [cursor=pointer]
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e67]: Ask for bill
+              - generic [ref=e68]: The waiter requests the bill from cashier
+            - button "Edit Ask for bill" [ref=e69] [cursor=pointer]
+      - generic [ref=e73]:
+        - generic [ref=e74]: Kitchen
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - generic [ref=e78]: Prepare order
+            - generic [ref=e79]: The kitchen prepares the order
+          - button "Edit Prepare order" [ref=e80] [cursor=pointer]
+      - generic [ref=e84]:
+        - generic [ref=e85]: Cashier
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e88]:
+              - generic [ref=e89]: Receive order
+              - generic [ref=e90]: Cashier receives order notification
+            - button "Edit Receive order" [ref=e91] [cursor=pointer]
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - generic [ref=e97]: Calculate total
+              - generic [ref=e98]: Cashier calculates the total and issues the receipt
+            - button "Edit Calculate total" [ref=e99] [cursor=pointer]
+  - contentinfo [ref=e103]:
+    - paragraph [ref=e104]: Linked Lists Workshop — Data Structures — 2024

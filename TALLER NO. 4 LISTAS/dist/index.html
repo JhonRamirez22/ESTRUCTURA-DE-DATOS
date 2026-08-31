@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant — Order Process</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Georgia&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" crossorigin src="/assets/index-TOoQcBWR.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header__brand">
+      <svg class="header__icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+      </svg>
+      <h1 class="header__title">Order System</h1>
+    </div>
+    <p class="header__subtitle">Process Diagram — Linked Lists</p>
+  </header>
+
+  <main class="main">
+    <div class="controls">
+      <button id="btn-advance" class="btn btn--primary">
+        <svg class="btn__icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Advance step
+      </button>
+      <button id="btn-reset" class="btn btn--secondary">
+        <svg class="btn__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Restart
+      </button>
+      <div id="status" class="status">
+        <span class="status__label">Status:</span>
+        <span id="status-text" class="status__text">Ready to start</span>
+      </div>
+    </div>
+
+    <div class="swimlanes" id="swimlanes">
+      <!-- Rendered dynamically -->
+    </div>
+
+    <div id="receipt-panel" class="receipt-panel receipt-panel--hidden">
+      <div class="receipt">
+        <div class="receipt__header">
+          <svg class="receipt__star" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9"/></svg>
+          <h2 class="receipt__title">RECEIPT</h2>
+          <svg class="receipt__star" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9"/></svg>
+        </div>
+        <div id="receipt-content" class="receipt__content">
+          <!-- Filled dynamically -->
+        </div>
+        <div class="receipt__footer">
+          <p>Thank you for your visit</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="error-toast" class="toast toast--hidden">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <span id="error-message"></span>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Linked Lists Workshop — Data Structures — 2024</p>
+  </footer>
+
+</body>
+</html>
