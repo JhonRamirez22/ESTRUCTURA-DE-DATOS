@@ -1,0 +1,22 @@
+{
+  "name": "editor-notas-offline-first",
+  "version": "1.0.0",
+  "description": "Editor de notas con autoguardado offline-first usando Pilas y Colas",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "keywords": [
+    "estructuras-de-datos",
+    "pilas",
+    "colas",
+    "typescript"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}

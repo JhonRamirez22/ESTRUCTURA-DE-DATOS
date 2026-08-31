@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor de Notas - Offline First</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Columna izquierda: Editor -->
+    <main class="editor-panel">
+      <header class="editor-header">
+        <div class="undo-redo-buttons">
+          <button id="undo-btn" disabled aria-label="Deshacer (Ctrl+Z)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 10h10a5 5 0 0 1 0 10H9"/>
+              <polyline points="7 14 3 10 7 6"/>
+            </svg>
+            <span id="undo-count" class="badge">0</span>
+          </button>
+          <button id="redo-btn" disabled aria-label="Rehacer (Ctrl+Y)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10H11a5 5 0 0 0 0 10h4"/>
+              <polyline points="17 14 21 10 17 6"/>
+            </svg>
+            <span id="redo-count" class="badge">0</span>
+          </button>
+        </div>
+        
+        <div class="editor-info">
+          <span id="char-count">0 caracteres</span>
+          <span id="save-status" aria-live="polite">Guardado</span>
+        </div>
+      </header>
+      
+      <textarea 
+        id="editor" 
+        placeholder="Escribe tu nota aquí..."
+        autofocus
+        spellcheck="false"
+      ></textarea>
+    </main>
+    
+    <!-- Columna derecha: Cola de sincronización -->
+    <aside class="sync-panel">
+      <header class="sync-header">
+        <h2>Cola de Sincronización</h2>
+        <span id="queue-badge" class="queue-badge">0 / 20</span>
+      </header>
+      
+      <div class="sync-controls">
+        <label class="toggle-switch">
+          <input type="checkbox" id="online-toggle" checked>
+          <span class="toggle-slider"></span>
+          <span class="toggle-label">Online</span>
+        </label>
+        
+        <button id="force-fail-btn" class="btn-force-fail">
+          Forzar fallo próximo envío
+        </button>
+      </div>
+      
+      <div id="queue-list" class="queue-list">
+        <!-- Las tarjetas de jobs se insertan dinámicamente -->
+      </div>
+      
+      <div id="empty-queue" class="empty-queue">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <p>Cola vacía - todo sincronizado</p>
+      </div>
+    </aside>
+  </div>
+  
+  <!-- Toast notifications -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+  
+  <script type="module" src="src/main.ts"></script>
+</body>
+</html>
