@@ -2,8 +2,9 @@ import { StepEditor } from './editor.js';
 import { renderLanes, updateStepVisual, showReceipt, hideReceipt, showError, updateStatus, updateAdvanceButton, } from './render.js';
 /**
  * Sets up the control button listeners and the step editor.
+ * @param onReset - Optional callback invoked after reset (e.g. to refresh order editor).
  */
-export function setupControls(process) {
+export function setupControls(process, onReset) {
     const btnAdvance = document.getElementById('btn-advance');
     const btnReset = document.getElementById('btn-reset');
     // Initialize editor
@@ -72,6 +73,7 @@ export function setupControls(process) {
             renderLanes(process, handleEdit);
             updateStatus('Process restarted');
             updateAdvanceButton(process.canAdvance(), process.isFinished());
+            onReset?.();
         });
     }
 }

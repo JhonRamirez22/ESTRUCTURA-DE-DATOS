@@ -1,15 +1,34 @@
 import { OrderProcess } from './domain/order-process.js';
-import { renderLanes, updateAdvanceButton, updateStatus } from './ui/render.js';
+import {
+  renderLanes,
+  updateAdvanceButton,
+  updateStatus,
+} from './ui/render.js';
 import { setupControls } from './ui/controls.js';
+import { setupOrderEditor } from './ui/order-editor.js';
 
 /**
  * Bootstrap: instantiates OrderProcess and hooks up UI.
  */
 function main(): void {
   const process = new OrderProcess();
+  const orderEditorContainer = document.getElementById('order-editor');
+
+  // Set up order editor
+  let orderEditor: ReturnType<typeof setupOrderEditor> | null = null;
+  if (orderEditorContainer) {
+    orderEditor = setupOrderEditor(
+      orderEditorContainer,
+      process.getOrderItemService(),
+      () => {
+        // Refresh lanes when items change (optional visual feedback)
+        setupControls(process, () => orderEditor?.render());
+      }
+    );
+  }
 
   // Set up controls (also does initial render with edit support)
-  setupControls(process);
+  setupControls(process, () => orderEditor?.render());
 
   // Initial button state
   updateAdvanceButton(process.canAdvance(), process.isFinished());

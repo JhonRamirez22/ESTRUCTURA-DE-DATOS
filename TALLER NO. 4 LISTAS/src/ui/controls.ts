@@ -12,8 +12,12 @@ import {
 
 /**
  * Sets up the control button listeners and the step editor.
+ * @param onReset - Optional callback invoked after reset (e.g. to refresh order editor).
  */
-export function setupControls(process: OrderProcess): void {
+export function setupControls(
+  process: OrderProcess,
+  onReset?: () => void
+): void {
   const btnAdvance = document.getElementById('btn-advance');
   const btnReset = document.getElementById('btn-reset');
 
@@ -91,6 +95,7 @@ export function setupControls(process: OrderProcess): void {
       renderLanes(process, handleEdit);
       updateStatus('Process restarted');
       updateAdvanceButton(process.canAdvance(), process.isFinished());
+      onReset?.();
     });
   }
 }

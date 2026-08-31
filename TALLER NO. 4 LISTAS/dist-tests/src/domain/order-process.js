@@ -1,6 +1,7 @@
 import { LinkedList } from '../data-structures/linked-list.js';
 import { STEPS } from './process-step.js';
 import { generateReceipt } from './receipt.js';
+import { OrderItemService } from './order-item.js';
 /**
  * Orchestrates the order service process using linked lists.
  *
@@ -11,42 +12,72 @@ import { generateReceipt } from './receipt.js';
  * - "prepare-order" and "receive-order" both depend on "pick-up-order" (fork).
  * - "calculate-total" depends on "ask-for-bill" AND "receive-order" (join).
  *
- * Trade-off vs multiple lists (one per lane):
- * Single list simplifies iteration and history. The cost is that
- * `canAdvance()` must search history for completed steps from other lanes.
- * For 9 steps this is O(n²) = practical constant.
- * Multiple lists require explicit synchronization between lists, more code,
- * and more bug surface — no real benefit for this scope.
+ * Fork/join support:
+ * - `getNextReadyStep()` finds the first step whose dependencies are all
+ *   completed and that hasn't been completed yet.
+ * - Multiple steps can be "ready" simultaneously (fork).
+ * - A step is blocked until all its dependencies complete (join).
+ * - The UI can query `getReadySteps()` to show all available steps.
  */
 export class OrderProcess {
     constructor() {
         this.steps = new LinkedList();
         this.completedSteps = [];
-        this.currentStepIndex = 0;
         this.receipt = null;
         this.stepStates = new Map();
+        this.orderItems = new OrderItemService();
         // Load all steps into the linked list
         for (const step of STEPS) {
             this.steps.append(step);
             this.stepStates.set(step.id, 'pending');
         }
     }
+    /** Returns the OrderItemService for adding/editing order items. */
+    getOrderItemService() {
+        return this.orderItems;
+    }
+    /** Returns the set of completed step IDs. */
+    getCompletedIds() {
+        return new Set(this.completedSteps.map((s) => s.id));
+    }
+    /**
+     * Finds the next step that is ready to execute.
+     * A step is ready if:
+     * 1. It has not been completed yet
+     * 2. All its dependencies are completed
+     * Returns the first ready step in STEPS order.
+     */
+    getNextReadyStep() {
+        const completedIds = this.getCompletedIds();
+        for (const step of STEPS) {
+            if (completedIds.has(step.id))
+                continue;
+            if (step.dependsOn.every((depId) => completedIds.has(depId))) {
+                return step;
+            }
+        }
+        return null;
+    }
+    /** Returns all steps that are currently ready to execute. */
+    getReadySteps() {
+        const completedIds = this.getCompletedIds();
+        const ready = [];
+        for (const step of STEPS) {
+            if (completedIds.has(step.id))
+                continue;
+            if (step.dependsOn.every((depId) => completedIds.has(depId))) {
+                ready.push(step);
+            }
+        }
+        return ready;
+    }
     /** Returns the current step (the next one that can be executed). */
     currentStep() {
-        const stepsArray = this.steps.toArray();
-        if (this.currentStepIndex >= stepsArray.length) {
-            return null;
-        }
-        return stepsArray[this.currentStepIndex];
+        return this.getNextReadyStep();
     }
     /** Checks whether the next step can be executed (all dependencies fulfilled). */
     canAdvance() {
-        const step = this.currentStep();
-        if (!step)
-            return false;
-        // Verify all dependencies are in history
-        const completedIds = new Set(this.completedSteps.map((s) => s.id));
-        return step.dependsOn.every((depId) => completedIds.has(depId));
+        return this.getNextReadyStep() !== null;
     }
     /**
      * Advances to the next process step.
@@ -56,44 +87,40 @@ export class OrderProcess {
         if (this.isFinished()) {
             throw new Error('Process already finished. Use reset() to restart.');
         }
-        const step = this.currentStep();
+        const step = this.getNextReadyStep();
         if (!step) {
-            throw new Error('No steps available.');
-        }
-        if (!this.canAdvance()) {
-            const missing = step.dependsOn.filter((depId) => !this.completedSteps.some((s) => s.id === depId));
-            throw new Error(`Cannot advance to "${step.action}". Missing dependencies: ${missing.join(', ')}`);
+            throw new Error('No steps available or all dependencies not met.');
         }
         // Mark as completed
         this.stepStates.set(step.id, 'completed');
         this.completedSteps.push(step);
-        // If it's "calculate-total", generate the receipt
-        if (step.id === 'calculate-total') {
-            this.receipt = generateReceipt(this.completedSteps);
+        // Lock order editing after pick-up-order
+        if (step.id === 'pick-up-order') {
+            this.orderItems.lock();
         }
-        // Advance to next step
-        this.currentStepIndex++;
-        // Update state of next step
-        const next = this.currentStep();
-        if (next) {
-            this.stepStates.set(next.id, 'active');
-            // If next step has pending dependencies, mark as waiting
-            if (!this.canAdvance()) {
-                this.stepStates.set(next.id, 'waiting');
+        // If it's "calculate-total", generate the receipt with real items
+        if (step.id === 'calculate-total') {
+            this.receipt = generateReceipt(this.orderItems.getItems());
+        }
+        // Update states of steps that are now ready (mark as active)
+        for (const readyStep of this.getReadySteps()) {
+            const currentState = this.stepStates.get(readyStep.id);
+            if (currentState !== 'completed') {
+                this.stepStates.set(readyStep.id, 'active');
             }
         }
         return step;
     }
     /** Indicates whether the process has reached the end. */
     isFinished() {
-        return this.currentStepIndex >= this.steps.size;
+        return this.completedSteps.length >= STEPS.length;
     }
     /** Resets the process to initial state. */
     reset() {
         this.completedSteps = [];
-        this.currentStepIndex = 0;
         this.receipt = null;
         this.stepStates.clear();
+        this.orderItems.clear();
         for (const step of STEPS) {
             this.stepStates.set(step.id, 'pending');
         }

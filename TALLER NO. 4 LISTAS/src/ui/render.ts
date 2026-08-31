@@ -90,6 +90,15 @@ export function showReceipt(receipt: ReturnType<OrderProcess['getReceipt']>): vo
   const content = document.getElementById('receipt-content');
   if (!panel || !content || !receipt) return;
 
+  const itemsHtml = receipt.items.length > 0
+    ? receipt.items.map((item) => `
+      <div class="receipt__item-row">
+        <span>${item.name} x${item.quantity}</span>
+        <span>$${(item.quantity * item.unitPrice).toFixed(2)}</span>
+      </div>
+    `).join('')
+    : '<div class="receipt__item-row receipt__item-row--empty"><span>No items added</span></div>';
+
   content.innerHTML = `
     <div class="receipt__meta">
       <span>Order:</span>
@@ -99,19 +108,24 @@ export function showReceipt(receipt: ReturnType<OrderProcess['getReceipt']>): vo
       <span>Date:</span>
       <span>${receipt.date}</span>
     </div>
-    <div style="border-top: 1px dashed #c0b090; margin: 0.5rem 0;"></div>
-    ${receipt.items
-      .map(
-        (item: { action: string; lane: string; description: string }) => `
-      <div class="receipt__item">
-        <span class="receipt__item-label">${item.lane}: ${item.action}</span>
-      </div>
-    `
-      )
-      .join('')}
+    <div class="receipt__divider"></div>
+    <div class="receipt__items-header">
+      <span>Item</span>
+      <span>Price</span>
+    </div>
+    ${itemsHtml}
+    <div class="receipt__divider"></div>
+    <div class="receipt__line">
+      <span>Subtotal</span>
+      <span>$${receipt.subtotal.toFixed(2)}</span>
+    </div>
+    <div class="receipt__line">
+      <span>Tax (${(receipt.taxRate * 100).toFixed(0)}%)</span>
+      <span>$${receipt.tax.toFixed(2)}</span>
+    </div>
     <div class="receipt__total">
       <span>TOTAL</span>
-      <span>${receipt.total}</span>
+      <span>$${receipt.total.toFixed(2)}</span>
     </div>
   `;
 

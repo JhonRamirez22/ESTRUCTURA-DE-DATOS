@@ -1,17 +1,19 @@
+const TAX_RATE = 0.16;
 /**
- * Generates the receipt from the completed steps history.
+ * Generates the receipt from the order items.
  * Only called after "calculate-total" executes.
  */
-export function generateReceipt(history) {
-    const items = history.map((step) => ({
-        action: step.action,
-        lane: step.lane,
-        description: step.description,
-    }));
+export function generateReceipt(items) {
+    const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+    const tax = subtotal * TAX_RATE;
+    const total = subtotal + tax;
     return {
         order: 'ORD-' + Date.now().toString(36).toUpperCase(),
         items,
-        total: '$ ' + (items.length * 12.5).toFixed(2),
+        subtotal,
+        taxRate: TAX_RATE,
+        tax,
+        total,
         date: new Date().toLocaleString('en-US', {
             year: 'numeric',
             month: '2-digit',

@@ -30,7 +30,32 @@ describe('OrderProcess — full flow', () => {
     const receipt = process.getReceipt();
     assert.notEqual(receipt, null);
     assert.ok(receipt!.order.startsWith('ORD-'));
-    assert.equal(receipt!.items.length, 8);
+    // No items added by default, so receipt should be empty
+    assert.equal(receipt!.items.length, 0);
+    assert.equal(receipt!.subtotal, 0);
+    assert.equal(receipt!.total, 0);
+  });
+
+  it('generates receipt with real items', () => {
+    const process = new OrderProcess();
+    const items = process.getOrderItemService();
+
+    // Add some items before advancing
+    items.addItem('Pasta', 2, 15.00);
+    items.addItem('Pizza', 1, 20.00);
+
+    // Advance to calculate-total
+    for (let i = 0; i < 7; i++) {
+      process.advance();
+    }
+    process.advance(); // calculate-total
+
+    const receipt = process.getReceipt();
+    assert.notEqual(receipt, null);
+    assert.equal(receipt!.items.length, 2);
+    assert.equal(receipt!.subtotal, 50.00); // 30 + 20
+    assert.equal(receipt!.tax, 8.00);      // 50 * 0.16
+    assert.equal(receipt!.total, 58.00);   // 50 + 8
   });
 });
 
@@ -101,6 +126,21 @@ describe('OrderProcess — edge cases', () => {
     process.advance();
     // prepare-order depends on pick-up-order (completed)
     assert.equal(process.canAdvance(), true);
+  });
+
+  it('order editing locks after pick-up-order', () => {
+    const process = new OrderProcess();
+    const items = process.getOrderItemService();
+
+    // Can add items before pick-up-order
+    items.addItem('Pasta', 1, 10);
+    assert.equal(items.getItemCount(), 1);
+
+    process.advance(); // request-order
+    process.advance(); // pick-up-order — locks editing
+
+    assert.equal(items.isLocked(), true);
+    assert.throws(() => items.addItem('Pizza', 1, 15), /Cannot modify/);
   });
 });
 
