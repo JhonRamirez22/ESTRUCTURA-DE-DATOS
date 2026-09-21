@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tareas — Lista Enlazada</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Tareas pendientes</h1>
+      <p class="subtitle">Implementado con lista enlazada simple (nodos + punteros)</p>
+
+      <form id="task-form">
+        <input id="task-input" type="text" placeholder="Nueva tarea..." maxlength="200" required />
+        <button type="submit">Agregar</button>
+      </form>
+
+      <p id="error" class="error" hidden></p>
+      <p id="empty-state" class="empty">No hay tareas todavía.</p>
+
+      <ul id="task-list"></ul>
+    </main>
+
+    <script type="module" src="dist/main.js"></script>
+  </body>
+</html>
